@@ -1,0 +1,118 @@
+/* --- Loading Screen Styles (Berdasarkan CSS Lama Anda) --- */
+
+/* Reset dasar */
+body {
+    margin: 0;
+    overflow: hidden; /* Mencegah scrolling saat loading */
+    position: relative;
+    background-color: #000; /* Pastikan body hitam jika loading belum muncul */
+    font-family: monospace; /* Font default */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Style untuk loading screen overlay */
+#loading-screen { /* Cocok dengan ID di HTML baru */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000; /* Background hitam loading */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out; /* Animasi fade out */
+    color: #0f0; /* Default hijau untuk teks (bisa di-override) */
+    opacity: 1; /* Mulai terlihat */
+}
+
+/* Style untuk kotak loading */
+.loading-box { /* Cocok dengan class di HTML baru */
+    border: 2px solid #ffff00; /* Kuning untuk border kotak */
+    padding: 20px 30px; /* Padding atas/bawah 20, kiri/kanan 30 */
+    width: 80%;
+    max-width: 450px; /* Sedikit lebih lebar dari contoh Anda */
+    color: #0f0; /* Teks di dalam kotak default hijau */
+    background-color: #000; /* Latar dalam box hitam */
+    border-radius: 5px; /* Sedikit lengkungan */
+}
+
+.title { /* Cocok dengan class di HTML baru */
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.5em; /* Sedikit lebih besar */
+    color: #00ffff; /* Cyan untuk judul */
+    font-weight: bold;
+}
+
+.status { /* Cocok dengan class di HTML baru */
+    margin-bottom: 15px; /* Jarak ke progress bar */
+    color: #0f0; /* Hijau untuk teks status */
+    font-size: 1.1em;
+}
+
+/* Style untuk kursor berkedip */
+.cursor { /* Cocok dengan class di HTML baru */
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px; /* Sedikit jarak dari teks */
+    opacity: 1;
+}
+
+/* Definisi animasi blink */
+@keyframes blink {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
+/* Container progress bar */
+.progress-container { /* Cocok dengan class di HTML baru */
+    width: 100%;
+    border: 1px solid #ffff00; /* Kuning untuk border container progress */
+    height: 25px; /* Sedikit lebih tinggi */
+    margin-bottom: 20px; /* Jarak ke pesan */
+    position: relative;
+    background-color: #111; /* Latar bar gelap */
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+/* Bar progress yang terisi */
+.progress-bar { /* Cocok dengan class di HTML baru */
+    height: 100%;
+    width: 0%;
+    background-color: #ff00ff; /* Magenta untuk bar progress */
+    transition: width 0.1s linear; /* Animasi perpindahan bar */
+}
+
+/* Teks persentase */
+.progress-percentage { /* Cocok dengan class di HTML baru */
+    position: absolute;
+    top: 50%; /* Pusatkan vertikal */
+    transform: translateY(-50%); /* Penyesuaian vertikal */
+    right: 8px; /* Jarak dari kanan */
+    color: #ffff00; /* Kuning untuk teks persentase */
+    font-size: 0.9em;
+    z-index: 2; /* Pastikan di atas bar */
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #000; /* Bayangan agar terbaca */
+}
+
+.message { /* Cocok dengan class di HTML baru */
+    text-align: center;
+    margin-top: 15px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #00ffff; /* Cyan untuk teks pesan */
+}
+
+/* Class untuk menyembunyikan loading (target ID baru) */
+#loading-screen.hidden {
+    opacity: 0; /* Buat transparan */
+    pointer-events: none; /* Tidak bisa diklik saat transparan */
+}

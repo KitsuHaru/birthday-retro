@@ -1,0 +1,224 @@
+/* --- Tetris Section Styles (Final Lengkap - Fix Overlay & Score Spacing) --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+#tetris-section {
+    display: none; /* Default tersembunyi */
+    width: 100%;
+    min-height: 100vh;
+    background-color: #3a2a5a; /* Latar ungu/biru tua */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Press Start 2P', monospace;
+    box-sizing: border-box;
+}
+
+.tetris-container {
+    width: 100%;
+    max-width: 380px; /* Sesuaikan lebar container */
+    background-color: #222; /* Warna casing gelap */
+    border: 5px solid #f0d000; /* Border kuning luar */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Pusatkan elemen di dalamnya */
+    box-sizing: border-box;
+}
+
+.tetris-title {
+    color: #00ffff; /* Cyan */
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-size: 1.8em;
+}
+
+.game-area-wrapper {
+    width: 100%;
+    background-color: #0a0a1a; /* Latar area game gelap */
+    border: 5px solid #2ecc40; /* Border hijau dalam */
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.7);
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    color: #2ecc40; /* Hijau terang */
+    font-size: 0.8em;
+    margin-bottom: 10px;
+    padding: 0 5px;
+}
+
+/* Perbaikan jarak untuk angka Score/Lines/Level */
+.game-info div span {
+    display: inline-block;
+    margin-left: 6px;     /* Jarak setelah label: */
+    min-width: 2ch;       /* Lebar minimum agar rapi */
+    text-align: right;    /* Rata kanan angka */
+}
+
+.canvas-container {
+    position: relative; /* Untuk positioning overlay */
+    width: max-content; /* Agar container pas dengan canvas */
+    margin: 0 auto; /* Tengahkan canvas jika container lebih lebar */
+    border: 2px solid #1a4a1a; /* Border tipis di sekitar canvas */
+}
+
+#tetris-board {
+    display: block; /* Hapus spasi ekstra di bawah canvas */
+    background-color: #000; /* Latar papan permainan hitam */
+}
+
+/* --- Overlays (Layout Diperbaiki Final) --- */
+.tetris-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(15, 56, 15, 0.9); /* Latar hijau gelap transparan (sedikit lebih pekat) */
+    border: 3px solid #f0d000; /* Border kuning overlay */
+    border-radius: 3px;
+    display: none; /* Default tersembunyi */
+    flex-direction: column;
+    /* justify-content: center; */ /* Coba ganti ke space-around atau flex-start jika perlu */
+    justify-content: space-around; /* Distribusikan ruang */
+    align-items: stretch;    /* Biarkan konten mengisi lebar */
+    text-align: center;
+    z-index: 10; /* Tampil di atas canvas */
+    padding: 15px 10px; /* Padding Atas/Bawah & Kiri/Kanan */
+    color: #fff; /* Teks putih default */
+    box-sizing: border-box; /* Include padding dalam ukuran */
+    font-family: 'Press Start 2P', monospace; /* Pastikan font diterapkan */
+    overflow-y: auto; /* Tambahkan scroll jika konten masih terlalu tinggi */
+    scrollbar-width: thin; /* Styling scrollbar opsional */
+    scrollbar-color: #f0d000 rgba(15, 56, 15, 0.9);
+}
+/* Scrollbar Webkit */
+.tetris-overlay::-webkit-scrollbar { width: 6px; }
+.tetris-overlay::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 3px;}
+.tetris-overlay::-webkit-scrollbar-thumb { background-color: #f0d000; border-radius: 3px; border: 1px solid #000; }
+
+
+.overlay-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Tengahkan item (judul, tombol) secara horizontal */
+    justify-content: center; /* Coba tengahkan juga secara vertikal di dalam box konten */
+    gap: 12px; /* Beri jarak otomatis antar elemen */
+    padding: 5px 0; /* Sedikit padding vertikal tambahan di dalam konten */
+    flex-shrink: 0; /* Pastikan konten tidak menyusut */
+}
+
+.game-over-text {
+    font-size: 2.2em; /* Sedikit perkecil */
+    color: #ff4136; /* Merah */
+    text-shadow: 2px 2px #a00;
+    line-height: 1.1;
+    margin: 0; /* Gunakan gap */
+}
+
+.inget-ya-title {
+    font-size: 1.4em; /* Sedikit perkecil */
+    color: #f0d000; /* Kuning */
+    margin: 0; /* Gunakan gap */
+}
+
+/* Targetkan semua <p> di dalam overlay */
+.overlay-content p {
+    font-size: 0.8em; /* Perkecil sedikit lagi */
+    line-height: 1.6;
+    color: #eee; /* Putih agak redup */
+    margin: 0; /* Hapus margin default, gunakan gap */
+    max-width: 95%; /* Batasi lebar agar tidak terlalu mepet border */
+}
+
+.overlay-content p.love-text {
+    font-size: 1em; /* Perkecil sedikit */
+    color: #ff851b; /* Oranye/pink */
+    font-weight: bold;
+     /* Jarak diatur oleh gap */
+}
+
+.btn-overlay-blue {
+    background-color: #0074D9; /* Biru */
+    color: white;
+    padding: 8px 20px; /* Perkecil padding tombol */
+    border: none; border-radius: 5px; cursor: pointer;
+    font-family: 'Press Start 2P', monospace; font-size: 0.9em; /* Perkecil font tombol */
+    box-shadow: 0 3px #004a8a;
+    margin-top: 5px; /* Jarak diatur oleh gap + sedikit margin */
+}
+.btn-overlay-blue:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px #003c70;
+}
+/* --- Akhir bagian Overlays --- */
+
+
+/* --- Kontrol --- */
+.tetris-controls {
+    display: flex;
+    justify-content: space-between; /* Atau space-around */
+    align-items: center;
+    width: 80%; /* Lebar area kontrol */
+    margin: 15px auto;
+}
+.btn-control {
+    background-color: #0074D9; /* Biru */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.5em; /* Ukuran panah/teks */
+    width: 50px; height: 40px; /* Ukuran tombol */
+    cursor: pointer;
+    box-shadow: 0 3px #004a8a;
+    display: flex; justify-content: center; align-items: center;
+    font-family: sans-serif; /* Font biasa untuk panah */
+}
+.btn-control.rotate {
+    font-size: 0.8em; /* Ukuran teks rotate */
+    width: 80px; /* Tombol rotate lebih lebar */
+    font-family: 'Press Start 2P', monospace;
+}
+.btn-control:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px #003c70;
+}
+
+.btn-start-game {
+    background-color: #2ECC40; /* Hijau */
+    color: black;
+    padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer;
+    font-family: 'Press Start 2P', monospace; font-size: 1em;
+    box-shadow: 0 3px #1a8c2a;
+    margin-bottom: 15px; /* Jarak ke tombol kembali */
+    width: 80%; /* Lebar tombol start */
+}
+.btn-start-game:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px #1a8c2a;
+}
+
+/* Tombol Navigasi Bawah */
+.tetris-nav {
+     width: 80%;
+     margin: 0 auto;
+}
+.btn-tetris-back {
+    background-color: #FF4136; /* Merah */
+    color: white;
+    padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer;
+    font-family: 'Press Start 2P', monospace; font-size: 1em;
+    box-shadow: 0 3px #a00;
+    width: 100%; /* Tombol kembali full width */
+}
+.btn-tetris-back:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px #a00;
+}

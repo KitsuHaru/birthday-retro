@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirthdaySurprise</title>
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/message.css">
+    <link rel="stylesheet" href="css/gallery.css">
+    <link rel="stylesheet" href="css/music.css">
+    <link rel="stylesheet" href="css/tetris.css"> 
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loading-box">
+            <div class="title">SUYO-BOY</div> <div class="status">
+                <span class="prompt">&gt;</span> <span class="status-text">BOOTING SYSTEM...</span><span class="cursor">_</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+                <span class="progress-percentage">0%</span>
+            </div>
+            <div class="message">SMILE!</div>
+        </div>
+    </div>
+    <section id="home-section" style="display: none;"> <div class="gameboy-container">
+        <div class="top-bar">
+            <div class="power-led"></div>
+            <div class="brand-name">SUYO-BOY</div> </div>
+
+        <div class="screen-area">
+            <div class="screen-text">
+                Happy Birthday!<br>Press Start Button
+            </div>
+            <div class="screen-bottom-bar">
+               <span class="screen-info">DOT MATRIX WITH STEREO SOUND</span>
+               <div class="battery-indicator">
+                   <span class="battery-icon"></span> BATTERY
+               </div>
+            </div>
+        </div>
+
+        <div class="main-buttons">
+            <button class="btn btn-message" data-target="message-section">MESSAGE</button>
+            <button class="btn btn-gallery" data-target="gallery-section">GALLERY</button>
+            <button class="btn btn-music" data-target="music-section">MUSIC</button>
+            <button class="btn btn-tetris" data-target="tetris-section">TETRIS</button>
+        </div>
+
+        <div class="bottom-controls">
+            <div class="d-pad">
+                <div class="d-pad-up"></div>
+                <div class="d-pad-middle"></div>
+                <div class="d-pad-left"></div>
+                <div class="d-pad-right"></div>
+                <div class="d-pad-down"></div>
+            </div>
+            <div class="ab-buttons">
+                <button class="btn-action btn-b">B</button>
+                <button class="btn-action btn-a">A</button>
+            </div>
+        </div>
+
+        <div class="select-start-area">
+            <button class="btn-system btn-select">SELECT</button>
+            <button class="btn-system btn-start">START</button>
+        </div>
+
+        <div class="speaker-holes">
+            </div>
+
+    </div>
+</section>
+
+<section id="message-section" style="display: none;">
+    <div class="message-container"> <div class="message-screen">
+            <h2 class="message-title">Message</h2>
+            <div class="message-content-wrapper"> <div class="message-content" id="message-text-area">
+                    </div>
+                <button class="btn btn-skip" id="skip-button" style="display: none;">SKIP</button>
+            </div>
+        </div>
+        <div class="message-buttons">
+            <button class="btn btn-next" data-target="gallery-section">SELANJUTNYA</button>
+            <button class="btn btn-back" data-target="home-section">KEMBALI</button>
+        </div>
+    </div>
+</section>
+
+<section id="gallery-section" style="display: none;">
+    <div class="gallery-container"> <div class="gallery-screen"> <h2 class="gallery-title">Gallery</h2>
+            <div class="photobox-header">
+                <div class="photobox-led photobox-led-left"></div>
+                <span class="photobox-brand">HEYTML PHOTOBOX</span> <div class="photobox-led photobox-led-right"></div>
+            </div>
+            <div class="photobox-slot"></div> <div class="photobox-content-area">
+                <div id="gallery-initial-state" class="gallery-state">
+                    <p>Photobox siap digunakan</p>
+                    <button class="btn btn-mulai-cetak" id="mulai-cetak-button">MULAI CETAK</button>
+                </div>
+
+                <div id="gallery-preparing-state" class="gallery-state" style="display: none;">
+                    <p>Mempersiapkan photobox...</p>
+                    <div class="mini-progress-container">
+                        <div class="mini-progress-bar" id="preparing-progress-bar"></div>
+                        <span class="mini-progress-percentage" id="preparing-percentage">0%</span>
+                    </div>
+                </div>
+
+                <div id="gallery-printing-state" class="gallery-state" style="display: none;">
+                    <div class="printed-photos-container" id="printed-photos">
+                        </div>
+                    <div class="printing-status">
+                        <p id="printing-status-text">Mencetak foto 1 dari 4...</p>
+                        <div class="mini-progress-container">
+                            <div class="mini-progress-bar" id="printing-progress-bar"></div>
+                            <span class="mini-progress-percentage" id="printing-percentage">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gallery-final-state" class="gallery-state" style="display: none;">
+                    <div class="printed-photos-container final" id="final-photos-list">
+                        </div>
+                    <button class="btn btn-cetak-ulang" id="cetak-ulang-button">CETAK ULANG</button>
+                </div>
+
+            </div>
+            <div class="photobox-bottom-lights"> <div class="bottom-light"></div>
+                 <div class="bottom-light"></div>
+            </div>
+        </div>
+
+        <div class="gallery-buttons">
+            <button class="btn btn-gallery-next" data-target="music-section">SELANJUTNYA</button>
+            <button class="btn btn-gallery-back" data-target="message-section">KEMBALI</button>
+        </div>
+    </div>
+
+    <div id="video-modal" class="video-modal-overlay" style="display: none;">
+        <div class="video-modal-content">
+            <div class="video-modal-header">
+                <span class="video-modal-title">Clip Dump</span>
+                <button id="video-modal-close" class="video-modal-close">&times;</button>
+            </div>
+            <div class="video-player-container">
+                <video id="clip-dump-video" controls width="100%">
+                    Maaf, browser Anda tidak mendukung tag video.
+                </video>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section id="music-section" style="display: none;">
+    <div class="music-container"> <div class="music-player-screen">
+            <h2 class="music-title-header">Music Player</h2>
+
+            <div class="current-track-info">
+                <img src="assets/images/default-album-art.png" alt="Album Art" id="album-art" class="album-art-img">
+                <div class="track-details">
+                    <span id="song-title">Judul Lagu</span>
+                    <span id="song-artist">Artis</span>
+                </div>
+            </div>
+
+            <div class="progress-area">
+                 <input type="range" id="progress-bar" class="progress-bar-input" value="0" min="0" step="1">
+                 <div class="time-display">
+                     <span id="current-time">0:00</span>
+                     <span id="total-duration">0:00</span>
+                 </div>
+            </div>
+
+            <div class="main-controls">
+                <button id="volume-btn" class="control-button volume-button">🔊</button>
+                <div class="playback-controls">
+                    <button id="prev-btn" class="control-button prev-button">⏮</button>
+                    <button id="play-pause-btn" class="control-button play-pause-button">▶</button>
+                    <button id="next-btn" class="control-button next-button">⏭</button>
+                </div>
+                 <div style="width: 30px;"></div>
+            </div>
+        </div>
+
+        <div class="playlist-area">
+             <h3 class="playlist-title">PLAYLIST:</h3>
+             <div class="playlist-container" id="playlist">
+                 </div>
+        </div>
+
+         <div class="music-buttons">
+            <button class="btn btn-music-next" data-target="tetris-section">SELANJUTNYA</button>
+            <button class="btn btn-music-back" data-target="gallery-section">KEMBALI</button>
+         </div>
+
+    </div>
+    <audio id="audio-player" src=""></audio>
+</section>
+
+<section id="tetris-section" style="display: none;">
+    <div class="tetris-container"> <h2 class="tetris-title">Tetris</h2>
+        <div class="game-area-wrapper"> <div class="game-info">
+                <div>Score: <span id="score">0</span></div>
+                <div>Lines: <span id="lines">0</span></div>
+                <div>Level: <span id="level">1</span></div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="tetris-board"></canvas>
+
+                <div id="game-over-overlay" class="tetris-overlay" style="display: none;">
+                    <div class="overlay-content">
+                        <div class="game-over-text">GAME OVER</div>
+                        <button id="btn-confirm-gameover" class="btn btn-overlay-blue">CONFIRM</button>
+                    </div>
+                </div>
+
+                <div id="inget-ya-overlay" class="tetris-overlay" style="display: none;">
+                     <div class="overlay-content inget-ya">
+                         <div class="inget-ya-title">INGET YA!</div>
+                         <p>walaupun kamu kalah,<br>
+                            tapi kamu selalu menang<br>
+                            kok di hati aku, HEHE<br>
+                            ^_^</p>
+                         <p class="love-text">I LOVE YOU &lt;3</p>
+                         <button id="btn-ok-ingetya" class="btn btn-overlay-blue">OK</button>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="tetris-controls">
+             <button id="btn-left" class="btn btn-control">‹</button>
+             <button id="btn-rotate" class="btn btn-control rotate">ROTATE</button>
+             <button id="btn-right" class="btn btn-control">›</button>
+         </div>
+         <button id="btn-start-game" class="btn btn-start-game">START GAME</button>
+
+         <div class="tetris-nav">
+            <button class="btn btn-tetris-back" data-target="music-section">KEMBALI</button>
+            </div>
+
+    </div>
+</section>
+        <audio id="button-sound" src="assets/audio/klik-retro.mp3" preload="auto"></audio>
+        <script src="js/loading.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/message.js"></script>
+        <script src="js/gallery.js"></script>
+        <script src="js/music.js"></script>
+        <script src="js/tetris.js"></script> 
+    </body>
+</html>

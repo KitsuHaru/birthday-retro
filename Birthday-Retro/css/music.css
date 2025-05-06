@@ -1,0 +1,236 @@
+/* --- Music Section Styles --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); /* Pastikan font ada */
+
+#music-section {
+    display: none; /* Default tersembunyi */
+    width: 100%;
+    min-height: 100vh;
+    background-color: #3a2a5a; /* Warna latar sama dengan gallery */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.music-container {
+    width: 100%;
+    max-width: 400px; /* Lebar mirip gallery */
+    background-color: #222;
+    border: 5px solid #f0d000; /* Border kuning luar */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column; /* Susun elemen secara vertikal */
+}
+
+.music-player-screen {
+    background-color: #0f380f; /* Latar hijau gelap layar player */
+    border: 5px solid #9bbc0f; /* Border hijau terang */
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.6);
+    margin-bottom: 15px; /* Jarak ke playlist */
+    position: relative; /* Untuk overlay jika perlu */
+}
+/* Overlay dot matrix (opsional) */
+.music-player-screen::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: radial-gradient(rgba(155,188,15,0.08) 1px, transparent 1px);
+    background-size: 3px 3px; opacity: 0.5; pointer-events: none; z-index: 1;
+}
+
+.music-title-header {
+    color: #9bbc0f; /* Hijau terang */
+    text-align: center;
+    margin: 0 0 15px 0;
+    font-size: 1.5em;
+    position: relative; z-index: 2;
+}
+
+/* Info Lagu & Cover */
+.current-track-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative; z-index: 2;
+}
+.album-art-img {
+    width: 80px; /* Ukuran cover */
+    height: 80px;
+    object-fit: cover; /* Agar gambar tidak gepeng */
+    border: 3px solid #306230; /* Border hijau lebih gelap */
+    border-radius: 4px;
+    margin-right: 15px;
+    background-color: #111; /* Warna jika gambar tidak ada */
+}
+.track-details {
+    display: flex;
+    flex-direction: column;
+    color: #cdeccd; /* Teks putih kehijauan */
+}
+#song-title {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+#song-artist {
+    font-size: 0.8em;
+    color: #9bbc0f; /* Hijau terang untuk artis */
+}
+
+/* Progress Bar */
+.progress-area {
+    position: relative; z-index: 2; margin-bottom: 15px;
+}
+.progress-bar-input {
+    width: 100%;
+    height: 10px; /* Tinggi bar */
+    cursor: pointer;
+    appearance: none; /* Hapus gaya default */
+    -webkit-appearance: none;
+    background: #306230; /* Warna track bar */
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #1a4a1a;
+}
+/* Styling Thumb (handle) - Webkit (Chrome, Safari, Edge) */
+.progress-bar-input::-webkit-slider-thumb {
+    appearance: none; -webkit-appearance: none;
+    width: 16px; height: 16px; background: #f0d000; /* Kuning */
+    border-radius: 50%; cursor: pointer; border: 2px solid #333;
+    margin-top: -4px; /* Sesuaikan posisi vertikal thumb */
+}
+/* Styling Thumb (handle) - Firefox */
+.progress-bar-input::-moz-range-thumb {
+    width: 16px; height: 16px; background: #f0d000; /* Kuning */
+    border-radius: 50%; cursor: pointer; border: 2px solid #333;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7em;
+    color: #9bbc0f; /* Hijau terang */
+    margin-top: 5px;
+}
+
+/* Tombol Kontrol */
+.main-controls {
+    display: flex;
+    justify-content: space-between; /* Posisikan volume ke kiri, play/dll ke tengah */
+    align-items: center;
+    position: relative; z-index: 2;
+    padding: 10px 0; /* Sedikit jarak */
+}
+.control-button {
+    background: none;
+    border: none;
+    color: #9bbc0f; /* Warna ikon hijau terang */
+    font-size: 1.8em; /* Ukuran ikon */
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1; /* Rapikan posisi ikon */
+}
+.control-button:active {
+    color: #cdeccd; /* Warna saat ditekan */
+}
+
+.playback-controls { /* Kelompokkan tombol play/prev/next */
+     display: flex;
+     gap: 20px; /* Jarak antar tombol playback */
+     align-items: center;
+}
+
+.play-pause-button {
+    font-size: 2.2em; /* Tombol play/pause lebih besar */
+    background-color: #0074D9; /* Latar biru */
+    color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 3px #004a8a;
+    padding-top: 4px; /* Sesuaikan posisi ikon play/pause */
+}
+.play-pause-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px #003c70;
+}
+
+/* Playlist */
+.playlist-area {
+    background-color: rgba(0, 0, 0, 0.2); /* Latar sedikit beda */
+    border: 1px solid #306230;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px; /* Jarak ke tombol nav bawah */
+    position: relative; z-index: 2; /* Di bawah layar player */
+}
+.playlist-title {
+    font-size: 0.9em;
+    color: #9bbc0f; /* Hijau terang */
+    margin: 0 0 10px 0;
+}
+.playlist-container {
+    max-height: 150px; /* Batas tinggi playlist */
+    overflow-y: auto; /* Scroll jika lebih panjang */
+    scrollbar-width: thin;
+    scrollbar-color: #2ecc40 #111;
+}
+.playlist-container::-webkit-scrollbar { width: 6px; }
+.playlist-container::-webkit-scrollbar-track { background: #111; border-radius: 3px;}
+.playlist-container::-webkit-scrollbar-thumb { background-color: #2ecc40; border-radius: 3px; border: 1px solid #000; }
+
+.playlist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 5px;
+    cursor: pointer;
+    border-bottom: 1px dashed #306230;
+    font-size: 0.8em;
+    color: #cdeccd; /* Putih kehijauan */
+}
+.playlist-item:last-child {
+    border-bottom: none;
+}
+.playlist-item:hover {
+    background-color: rgba(155, 188, 15, 0.2); /* Highlight hijau transparan saat hover */
+}
+.playlist-item.playing { /* Style untuk lagu yg sedang diputar */
+    background-color: rgba(46, 204, 64, 0.3); /* Highlight hijau lebih jelas */
+    font-weight: bold;
+    color: #fff;
+}
+.playlist-item .item-title {
+    flex-grow: 1; /* Ambil sisa ruang */
+    margin-right: 10px; /* Jarak ke durasi */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Tampilkan ... jika judul terlalu panjang */
+}
+.playlist-item .item-duration {
+    color: #9bbc0f; /* Hijau terang untuk durasi */
+    font-size: 0.9em;
+}
+
+
+/* Tombol Navigasi Bawah */
+.music-buttons {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;
+}
+.music-buttons .btn {
+    padding: 12px 10px; border: none; border-radius: 5px; font-weight: bold;
+    font-size: 1em; cursor: pointer; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s ease, box-shadow 0.1s ease;
+    text-align: center; font-family: 'Press Start 2P', monospace;
+}
+.music-buttons .btn:active { transform: translateY(1px) translateX(1px); box-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+.btn-music-next { background-color: #2ECC40; color: black; box-shadow: 0 3px #1a8c2a; } /* Hijau */
+.btn-music-back { background-color: #FF4136; color: white; box-shadow: 0 3px #a00; } /* Merah */
+.btn-music-next:active { box-shadow: 0 2px #1a8c2a; }
+.btn-music-back:active { box-shadow: 0 2px #a00; }
