@@ -109,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = false;
         playPauseBtn.innerHTML = '▶'; // Ikon Play
     }
-
+    window.pauseMusicPlayer = pauseSong;
+    
     function prevSong() {
         currentSongIndex--;
         if (currentSongIndex < 0) {
