@@ -1,281 +1,243 @@
-// File: js/gallery.js
+// File: js/gallery.js (Diperbarui dengan Kontrol Backsound untuk Video Modal)
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Konfigurasi & Data (Nama File Dummy) ---
-    // ---> EDIT BAGIAN INI <---
     const photoURLs = [
-        'assets/images/gallery-photo-1.jpg', // Ganti ini jika nama file Anda beda
-        'assets/images/gallery-photo-2.jpg', // Ganti ini jika nama file Anda beda
-        'assets/images/gallery-photo-3.jpg', // Ganti ini jika nama file Anda beda
-        'assets/images/gallery-photo-4.jpg'  // Ganti ini jika nama file Anda beda
+        'assets/images/gallery-photo-1.jpg',
+        'assets/images/gallery-photo-2.jpg',
+        'assets/images/gallery-photo-3.jpg',
+        'assets/images/gallery-photo-4.jpg'
     ];
-    const videoURL = 'assets/video/gallery-video-clip.mp4'; // Ganti ini jika nama file Anda beda
-    // ---> AKHIR BAGIAN EDIT <---
+    const videoURL = 'assets/video/gallery-video-clip.mp4';
     const totalPhotos = photoURLs.length;
-    const PREPARING_SPEED = 30; // Kecepatan loading persiapan (ms)
-    const PRINTING_SPEED = 40; // Kecepatan loading per foto (ms)
-    const PHOTO_ENTRY_DELAY = 500; // Jeda sebelum foto berikutnya mulai cetak (ms)
+    const PREPARING_SPEED = 30;
+    const PRINTING_SPEED = 40;
+    const PHOTO_ENTRY_DELAY = 500;
 
     // --- Ambil Elemen DOM ---
     const gallerySection = document.getElementById('gallery-section');
-    // States
     const initialStateDiv = document.getElementById('gallery-initial-state');
     const preparingStateDiv = document.getElementById('gallery-preparing-state');
     const printingStateDiv = document.getElementById('gallery-printing-state');
     const finalStateDiv = document.getElementById('gallery-final-state');
     const allStateDivs = document.querySelectorAll('.gallery-state');
-    // Buttons
     const mulaiCetakButton = document.getElementById('mulai-cetak-button');
     const cetakUlangButton = document.getElementById('cetak-ulang-button');
-    // Progress Bars & Text
     const preparingProgressBar = document.getElementById('preparing-progress-bar');
     const preparingPercentageText = document.getElementById('preparing-percentage');
     const printingStatusText = document.getElementById('printing-status-text');
     const printingProgressBar = document.getElementById('printing-progress-bar');
     const printingPercentageText = document.getElementById('printing-percentage');
-    // Containers
     const printedPhotosContainer = document.getElementById('printed-photos');
     const finalPhotosListContainer = document.getElementById('final-photos-list');
-    // Video Modal
     const videoModal = document.getElementById('video-modal');
     const videoModalCloseButton = document.getElementById('video-modal-close');
     const videoPlayer = document.getElementById('clip-dump-video');
     const galleryContentArea = document.querySelector('#gallery-section .photobox-content-area');
 
+    // === TAMBAHKAN REFERENSI KE BACKSOUND DAN STATE-NYA ===
+    const backgroundMusic = document.getElementById('background-music');
+    let wasBacksoundPlayingBeforeModal = false;
+    // === AKHIR TAMBAHAN ===
+
     // --- State Management ---
     let currentPhotoIndex = 0;
     let preparingInterval;
     let printingInterval;
-    let printedPhotoElements = []; // Simpan elemen foto yang sudah dibuat
+    let printedPhotoElements = [];
 
     // --- Fungsi Helper ---
     function setState(newState) {
-        allStateDivs.forEach(div => {
-            div.style.display = 'none'; // Sembunyikan semua state
-        });
-         // Set overflow content area sesuai state
+        // Pastikan elemen galleryContentArea ada sebelum diakses
+        if (!galleryContentArea) {
+            console.error("Elemen galleryContentArea tidak ditemukan saat setState.");
+            // Hentikan fungsi jika elemen krusial tidak ada untuk mencegah error lebih lanjut
+            allStateDivs.forEach(div => { if(div) div.style.display = 'none'; }); // Tetap sembunyikan state lain
+            const targetStateDivOnError = document.getElementById(`gallery-${newState}-state`);
+            if (targetStateDivOnError) targetStateDivOnError.style.display = 'flex'; // Coba tampilkan state yg diminta
+            return;
+        }
+
+        allStateDivs.forEach(div => { if(div) div.style.display = 'none'; });
+
         if (newState === 'printing' || newState === 'final') {
             galleryContentArea.style.overflowY = 'auto';
-             galleryContentArea.style.justifyContent = 'flex-start'; // Mulai dari atas
+            galleryContentArea.style.justifyContent = 'flex-start';
         } else {
-             galleryContentArea.style.overflowY = 'hidden';
-             galleryContentArea.style.justifyContent = 'center'; // Tengahkan state awal/prepare
+            galleryContentArea.style.overflowY = 'hidden';
+            galleryContentArea.style.justifyContent = 'center';
         }
 
         const targetStateDiv = document.getElementById(`gallery-${newState}-state`);
         if (targetStateDiv) {
-            targetStateDiv.style.display = 'flex'; // Gunakan flex untuk layout internal state
-            targetStateDiv.style.flexDirection = 'column'; // Pastikan kolom
+            targetStateDiv.style.display = 'flex';
+            targetStateDiv.style.flexDirection = 'column';
             if (newState === 'initial' || newState === 'preparing'){
-                 targetStateDiv.style.justifyContent = 'center'; // Tengahkan isi state awal & prepare
-                 targetStateDiv.style.alignItems = 'center';
+                targetStateDiv.style.justifyContent = 'center';
+                targetStateDiv.style.alignItems = 'center';
             } else {
-                 targetStateDiv.style.justifyContent = 'flex-start'; // State print/final mulai dari atas
-                 targetStateDiv.style.alignItems = 'center';
+                targetStateDiv.style.justifyContent = 'flex-start';
+                targetStateDiv.style.alignItems = 'center';
             }
-
         } else {
-            console.error("State div not found for:", newState);
+            // console.error("State div tidak ditemukan untuk:", newState); // Matikan jika terlalu berisik
         }
     }
 
     // --- Fungsi Utama ---
-
-    // Inisialisasi Gallery Section (dipanggil dari main.js)
     function initGallery() {
-        // console.log("Initializing Gallery");
-        setState('initial'); // Set ke state awal
-        // Hentikan interval yang mungkin masih berjalan jika user kembali
-        clearInterval(preparingInterval);
-        clearInterval(printingInterval);
-        currentPhotoIndex = 0;
-        printedPhotoElements = []; // Kosongkan array elemen foto
-        if(printedPhotosContainer) printedPhotosContainer.innerHTML = ''; // Kosongkan kontainer foto
-        if(finalPhotosListContainer) finalPhotosListContainer.innerHTML = ''; // Kosongkan kontainer akhir
-        // Set progress bar ke 0
+        setState('initial');
+        clearInterval(preparingInterval); clearInterval(printingInterval);
+        currentPhotoIndex = 0; printedPhotoElements = [];
+        if(printedPhotosContainer) printedPhotosContainer.innerHTML = '';
+        if(finalPhotosListContainer) finalPhotosListContainer.innerHTML = '';
         if(preparingProgressBar) preparingProgressBar.style.width = '0%';
         if(preparingPercentageText) preparingPercentageText.textContent = '0%';
         if(printingProgressBar) printingProgressBar.style.width = '0%';
         if(printingPercentageText) printingPercentageText.textContent = '0%';
     }
-    window.initGallery = initGallery; // Buat global agar bisa dipanggil main.js
+    window.initGallery = initGallery;
 
-
-    // Mulai loading persiapan
     function startPreparingLoading() {
-        clearInterval(preparingInterval); // Hapus interval lama jika ada
+        clearInterval(preparingInterval);
         let percentage = 0;
-        preparingProgressBar.style.width = '0%';
-        preparingPercentageText.textContent = '0%';
+        if(preparingProgressBar) preparingProgressBar.style.width = '0%'; // Cek null
+        if(preparingPercentageText) preparingPercentageText.textContent = '0%'; // Cek null
 
         preparingInterval = setInterval(() => {
             percentage++;
-            preparingProgressBar.style.width = percentage + '%';
-            preparingPercentageText.textContent = percentage + '%';
-
+            if(preparingProgressBar) preparingProgressBar.style.width = percentage + '%';
+            if(preparingPercentageText) preparingPercentageText.textContent = percentage + '%';
             if (percentage >= 100) {
                 clearInterval(preparingInterval);
-                // console.log("Preparing done, starting printing cycle");
-                startPrintingCycle(); // Mulai cetak foto
+                startPrintingCycle();
             }
         }, PREPARING_SPEED);
     }
 
-    // Mulai siklus cetak foto
     function startPrintingCycle() {
         setState('printing');
-        currentPhotoIndex = 0;
-        printedPhotoElements = []; // Kosongkan array elemen
-        printedPhotosContainer.innerHTML = ''; // Kosongkan kontainer tampilan printing
-        finalPhotosListContainer.innerHTML = ''; // Kosongkan kontainer tampilan akhir
-        printPhoto(currentPhotoIndex); // Mulai cetak foto pertama
+        currentPhotoIndex = 0; printedPhotoElements = [];
+        if(printedPhotosContainer) printedPhotosContainer.innerHTML = '';
+        if(finalPhotosListContainer) finalPhotosListContainer.innerHTML = '';
+        printPhoto(currentPhotoIndex);
     }
 
-    // Fungsi untuk "mencetak" satu foto
     function printPhoto(index) {
-        if (index >= totalPhotos) {
-            // console.log("All photos printed, showing final state");
-            showFinalState(); // Semua foto selesai, tampilkan state akhir
-            return;
+        if (index >= totalPhotos) { showFinalState(); return; }
+        if(printingStatusText) printingStatusText.textContent = `Mencetak foto ${index + 1} dari ${totalPhotos}...`;
+        if(printingProgressBar) printingProgressBar.style.width = '0%';
+        if(printingPercentageText) printingPercentageText.textContent = '0%';
+
+        const photoDiv = document.createElement('div'); photoDiv.className = 'photo-item';
+        const img = document.createElement('img'); img.src = photoURLs[index]; img.alt = `Foto ${index + 1}`;
+        img.onerror = () => img.src = 'assets/images/placeholder_error.png';
+        const caption = document.createElement('span'); caption.className = 'photo-caption'; caption.textContent = `#${index + 1}`;
+        photoDiv.appendChild(img); photoDiv.appendChild(caption);
+        if(printedPhotosContainer) {
+            printedPhotosContainer.appendChild(photoDiv);
+            printedPhotosContainer.scrollTop = printedPhotosContainer.scrollHeight; // Scroll setelah menambah
         }
-
-        printingStatusText.textContent = `Mencetak foto ${index + 1} dari ${totalPhotos}...`;
-        printingProgressBar.style.width = '0%';
-        printingPercentageText.textContent = '0%';
-
-        // Buat elemen HTML untuk foto
-        const photoDiv = document.createElement('div');
-        photoDiv.className = 'photo-item';
-
-        const img = document.createElement('img');
-        img.src = photoURLs[index];
-        img.alt = `Foto ${index + 1}`;
-        img.onerror = () => img.src = 'assets/images/placeholder_error.png'; // Gambar pengganti jika error load
-
-        const caption = document.createElement('span');
-        caption.className = 'photo-caption';
-        caption.textContent = `#${index + 1}`; // Contoh caption nomor
-
-        photoDiv.appendChild(img);
-        photoDiv.appendChild(caption);
-
-        // Tambahkan ke kontainer DAN simpan referensi elemennya
-        printedPhotosContainer.appendChild(photoDiv);
-        printedPhotoElements.push(photoDiv); // Simpan elemen untuk state final
-
-        // Scroll ke bawah jika perlu
-         printedPhotosContainer.scrollTop = printedPhotosContainer.scrollHeight;
-
-        // Mulai loading persentase untuk foto ini
+        printedPhotoElements.push(photoDiv);
         startPerPhotoLoading(index);
     }
 
-    // Loading persentase per foto
     function startPerPhotoLoading(index) {
-        clearInterval(printingInterval);
-        let percentage = 0;
-        printingProgressBar.style.width = '0%';
-        printingPercentageText.textContent = '0%';
-
+        clearInterval(printingInterval); let percentage = 0;
+        if(printingProgressBar) printingProgressBar.style.width = '0%';
+        if(printingPercentageText) printingPercentageText.textContent = '0%';
         printingInterval = setInterval(() => {
             percentage++;
-            printingProgressBar.style.width = percentage + '%';
-            printingPercentageText.textContent = percentage + '%';
-
+            if(printingProgressBar) printingProgressBar.style.width = percentage + '%';
+            if(printingPercentageText) printingPercentageText.textContent = percentage + '%';
             if (percentage >= 100) {
-                clearInterval(printingInterval);
-                currentPhotoIndex++;
-                // Jeda sebentar sebelum cetak foto berikutnya
-                setTimeout(() => {
-                    printPhoto(currentPhotoIndex);
-                }, PHOTO_ENTRY_DELAY);
+                clearInterval(printingInterval); currentPhotoIndex++;
+                setTimeout(() => { printPhoto(currentPhotoIndex); }, PHOTO_ENTRY_DELAY);
             }
         }, PRINTING_SPEED);
     }
 
-    // Tampilkan state akhir setelah semua foto tercetak
     function showFinalState() {
         setState('final');
-        finalPhotosListContainer.innerHTML = ''; // Kosongkan dulu
-
-        // Salin semua elemen foto yang sudah dibuat ke kontainer final
+        if(finalPhotosListContainer) finalPhotosListContainer.innerHTML = '';
         printedPhotoElements.forEach(photoEl => {
-            finalPhotosListContainer.appendChild(photoEl.cloneNode(true)); // Salin elemennya
+            if(finalPhotosListContainer) finalPhotosListContainer.appendChild(photoEl.cloneNode(true));
         });
-
-        // Buat dan tambahkan placeholder video
         const videoPlaceholderDiv = document.createElement('div');
-        videoPlaceholderDiv.className = 'video-placeholder';
-        videoPlaceholderDiv.id = 'clip-dump-placeholder'; // Beri ID agar bisa ditarget
-        videoPlaceholderDiv.innerHTML = `
-            <div class="play-icon">▶</div>
-            <div class="video-title">Clip Dump</div>
-            <div class="video-caption">Kenangan spesial!</div>
-        `;
-        finalPhotosListContainer.appendChild(videoPlaceholderDiv);
-
-        // Tambahkan event listener ke placeholder video YANG BARU DIBUAT
-        videoPlaceholderDiv.addEventListener('click', openVideoModal);
-
-        // Pastikan bisa discroll
-        finalPhotosListContainer.scrollTop = 0; // Scroll ke atas
+        videoPlaceholderDiv.className = 'video-placeholder'; videoPlaceholderDiv.id = 'clip-dump-placeholder';
+        videoPlaceholderDiv.innerHTML = `<div class="play-icon">▶</div><div class="video-title">Clip Dump</div><div class="video-caption">Kenangan spesial!</div>`;
+        if(finalPhotosListContainer) finalPhotosListContainer.appendChild(videoPlaceholderDiv);
+        const actualPlaceholder = document.getElementById('clip-dump-placeholder'); // Ambil lagi elemen yg baru dibuat
+        if(actualPlaceholder) actualPlaceholder.addEventListener('click', openVideoModal);
+        if(finalPhotosListContainer) finalPhotosListContainer.scrollTop = 0;
     }
 
-
-    // --- Fungsi untuk Video Modal ---
+    // --- Fungsi untuk Video Modal (DENGAN KONTROL BACKSOUND) ---
     function openVideoModal() {
-        // console.log("Opening video modal");
-        if (videoPlayer && videoURL) {
-            videoPlayer.src = videoURL; // Set sumber video
-            videoModal.style.display = 'flex'; // Tampilkan modal
-            // videoPlayer.play(); // Optional: langsung putar
+        // === PAUSE BACKSOUND SAAT MODAL DIBUKA ===
+        if (backgroundMusic && !backgroundMusic.paused) {
+            try {
+                backgroundMusic.pause();
+                wasBacksoundPlayingBeforeModal = true;
+            } catch (e) { console.warn("Gagal mem-pause backsound saat membuka modal video:", e); }
         } else {
-            console.error("Video player or URL not found");
+            wasBacksoundPlayingBeforeModal = false;
+        }
+        // === AKHIR LOGIKA PAUSE BACKSOUND ===
+
+        if (videoPlayer && videoURL && videoModal) {
+            videoPlayer.src = videoURL;
+            videoModal.style.display = 'flex';
+            // videoPlayer.play(); // Opsional
+        } else {
+            console.error("Video player, videoURL, atau videoModal tidak ditemukan saat openVideoModal");
         }
     }
 
     function closeVideoModal() {
-         // console.log("Closing video modal");
-         if (videoPlayer) {
-             videoPlayer.pause(); // Jeda video saat ditutup
-             videoPlayer.src = ""; // Kosongkan src untuk stop buffering
-         }
-        videoModal.style.display = 'none'; // Sembunyikan modal
+        if (videoPlayer) {
+            videoPlayer.pause();
+            videoPlayer.src = "";
+        }
+        if (videoModal) videoModal.style.display = 'none';
+
+        // === RESUME BACKSOUND SAAT MODAL DITUTUP ===
+        const currentActiveSection = document.querySelector('section[style*="display: flex"], section[style*="display: block"]');
+        if (backgroundMusic && wasBacksoundPlayingBeforeModal &&
+            currentActiveSection && currentActiveSection.id !== 'music-section') {
+            try {
+                backgroundMusic.play().catch(e => console.warn("Gagal resume backsound:", e));
+            } catch (e) { console.warn("Error saat resume backsound:", e); }
+        }
+        wasBacksoundPlayingBeforeModal = false; // Reset flag
+        // === AKHIR LOGIKA RESUME BACKSOUND ===
     }
 
     // --- Event Listeners untuk Tombol ---
-    if (mulaiCetakButton) {
-        mulaiCetakButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            // console.log("Mulai Cetak Clicked");
-            setState('preparing');
-            startPreparingLoading();
-        });
-    } else { console.error("Button 'Mulai Cetak' not found"); }
+    if (mulaiCetakButton) { mulaiCetakButton.addEventListener('click', (e) => { e.preventDefault(); setState('preparing'); startPreparingLoading(); }); }
+    else { console.warn("Tombol 'Mulai Cetak' tidak ditemukan (mungkin karena belum di state initial)."); }
 
-    if (cetakUlangButton) {
-         cetakUlangButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            // console.log("Cetak Ulang Clicked");
-            // Langsung mulai printing cycle lagi
-            startPrintingCycle();
-        });
-    } else { console.error("Button 'Cetak Ulang' not found"); }
+    if (cetakUlangButton) { cetakUlangButton.addEventListener('click', (e) => { e.preventDefault(); startPrintingCycle(); }); }
+    else { /* console.warn("Tombol 'Cetak Ulang' tidak selalu ada."); */ }
 
-    if (videoModalCloseButton) {
-        videoModalCloseButton.addEventListener('click', closeVideoModal);
-    } else { console.error("Video modal close button not found"); }
+    if (videoModalCloseButton) { videoModalCloseButton.addEventListener('click', closeVideoModal); }
+    else { console.warn("Tombol close video modal tidak ditemukan."); }
 
-     // Listener untuk menutup modal jika klik di luar area konten modal (di overlay)
-     if (videoModal) {
+    if (videoModal) {
          videoModal.addEventListener('click', (event) => {
-             // Jika yg diklik adalah overlay itu sendiri, bukan konten di dalamnya
-             if (event.target === videoModal) {
-                 closeVideoModal();
-             }
+             if (event.target === videoModal) { closeVideoModal(); }
          });
-     }
+     } else { console.warn("Elemen video modal tidak ditemukan."); }
 
+    // Pengecekan elemen DOM penting lainnya di awal
+    const importantElements = {gallerySection, initialStateDiv, preparingStateDiv, printingStateDiv, finalStateDiv,
+                                preparingProgressBar, preparingPercentageText, printingStatusText, printingProgressBar,
+                                printingPercentageText, printedPhotosContainer, finalPhotosListContainer, videoPlayer, galleryContentArea};
+    for (const key in importantElements) {
+        if (!importantElements[key]) {
+            console.warn(`Elemen Gallery krusial '${key}' tidak ditemukan.`);
+        }
+    }
 
 }); // Akhir DOMContentLoaded
