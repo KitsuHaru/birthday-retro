@@ -70,9 +70,9 @@ Website ini terdiri dari beberapa section dengan fitur menarik:
 
 ## 🎮 Cara Menjalankan / Melihat Proyek
 
-**Pilihan 1: Melihat Versi Online (Jika Sudah Deploy)**
+**Pilihan 1: Melihat Versi Online**
 Website ini sudah di-deploy dan bisa diakses melalui link berikut:
-(`[https://ucapan-spesial-yas.vercel.app](https://birthdaysuyo.vercel.app/)`)
+(https://birthdaysuyo.vercel.app/)
 
 **Pilihan 2: Menjalankan Secara Lokal**
 1.  Clone repositori ini ke komputer Anda:
